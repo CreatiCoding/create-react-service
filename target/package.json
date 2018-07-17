@@ -1,0 +1,29 @@
+{
+  "name": "target",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "server": "PUBLIC_URL=\"1234\" PORT=3011 nodemon ./bin/www",
+    "client": "PUBLIC_URL=\"1234\" PORT=3011 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "debug": "^2.6.9",
+    "ejs": "^2.5.9",
+    "express": "^4.16.3",
+    "http-errors": "^1.6.3",
+    "morgan": "^1.9.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-scripts": "^1.1.4"
+  },
+  "priiioxy": "http://localhost:3011/",
+  "homepage": "/crs",
+  "devDependencies": {
+    "cross-env": "^5.2.0"
+  }
+}
