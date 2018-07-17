@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "server": "PUBLIC_URL=\"1234\" PORT=3011 nodemon ./bin/www",
-    "client": "PUBLIC_URL=\"1234\" PORT=3011 react-scripts start",
+    "server": "PORT=3011 nodemon ./bin/www",
+    "client": "PORT=3012 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
@@ -19,11 +19,9 @@
     "morgan": "^1.9.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "^1.1.4"
+    "react-scripts": "^1.1.4",
+    "yarn": "^1.7.0"
   },
-  "priiioxy": "http://localhost:3011/",
-  "homepage": "/crs",
-  "devDependencies": {
-    "cross-env": "^5.2.0"
-  }
+  "proxy": "http://localhost:3011/",
+  "homepageccc": "/crs"
 }
