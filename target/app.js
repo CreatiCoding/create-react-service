@@ -17,9 +17,18 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-console.log(process.env.PUBLIC_URL);
-app.use(express.static(path.join(__dirname, 'public')));
-
+console.log(process.env.DEV);
+if(process.env.DEV == "true"){
+	app.use(express.static(path.join(__dirname, 'public')));
+	console.log("It is dev version");
+	console.log(process.env.PUBLIC_URL);
+}else if(process.env.DEV == "false"){
+	app.use(express.static(path.join(__dirname, 'build')));
+	console.log("It is production version");
+	console.log(process.env.PUBLIC_URL);
+}else{
+	process.exit(1);
+}
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
