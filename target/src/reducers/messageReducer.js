@@ -1,7 +1,7 @@
 import * as types from "../actions/ActionTypes";
 
 const initialState = {
-	message: "hello World!"
+	message: "Hello World!"
 };
 
 export default function messageReducer(state = initialState, action) {

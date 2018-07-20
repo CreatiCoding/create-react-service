@@ -4,7 +4,7 @@ import ReactDom from "react-dom";
 import React from "react";
 import registerServiceWorker from './js/registerServiceWorker';
 import reducers from "./reducers";
-import App from './components/App';
+import App from './containers/App';
 import './css/index.css';
 
 // 스토어
