@@ -1,0 +1,16 @@
+{
+  "name": "%name%",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "DEV=true concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "deploy": "yarn build && DEV=false PORT=3000 nodemon ./bin/www",
+    "server": "PORT=3001 nodemon ./bin/www",
+    "client": "PORT=3000 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://localhost:3001/",
+  "homepage": ""
+}

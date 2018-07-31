@@ -3,6 +3,21 @@ const co = require("co");
 const prompt = require("co-prompt");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
+const fs = require('fs');
+
+
+let createDir = (path)=>{
+	return new Promise((res, rej)=>{
+		if(!fs.existsSync(path)){
+			console.log(path+" is created.");
+			fs.mkdirSync(path);
+			res(true);
+		} else {
+			console.log(path+" already exists.");
+			rej(false);
+		}
+	});
+};
 
 let inputProjectName = (res, rej)=>{
 	return co(function *(){
@@ -40,9 +55,15 @@ let expressProcess = (name) => {
 	});
 };
 
+let copyProcess = (filename) =>{
+
+} 
+
+
 new Promise(inputProjectName)
 	.then(craProcess)
 	.then(expressProcess)
+	.then((name)=>createDir(name+"/testdir"))
 	.then(result=>{
 	console.log("complete " + result);
 	process.exit(0);
