@@ -6,15 +6,16 @@ const spawn = require("child_process").spawn;
 const fs = require('fs');
 
 
-let createDir = (path)=>{
-	return new Promise((res, rej)=>{
+let createDir = (name, path)=>{
+	path = name + path;
+	return new Promise((res)=>{
 		if(!fs.existsSync(path)){
 			console.log(path+" is created.");
 			fs.mkdirSync(path);
-			res(true);
+			res(name);
 		} else {
 			console.log(path+" already exists.");
-			rej(false);
+			res(name);
 		}
 	});
 };
@@ -63,11 +64,18 @@ let copyProcess = (filename) =>{
 new Promise(inputProjectName)
 	.then(craProcess)
 	.then(expressProcess)
-	.then((name)=>createDir(name+"/testdir"))
+	.then((name)=>createDir(name,"/actions"))
+	.then((name)=>createDir(name,"/components"))
+	.then((name)=>createDir(name,"/containers"))
+	.then((name)=>createDir(name,"/css"))
+	.then((name)=>createDir(name,"/images"))
+	.then((name)=>createDir(name,"/js"))
+	.then((name)=>createDir(name,"/routes"))
+	.then((name)=>createDir(name,"/reducer"))
 	.then(result=>{
-	console.log("complete " + result);
-	process.exit(0);
-});;
+		console.log("complete " + result);
+		process.exit(0);
+	});
 
 
 /*
