@@ -71,7 +71,7 @@ new Promise(inputProjectName)
 	.then((name)=>createDir(name,"/images"))
 	.then((name)=>createDir(name,"/js"))
 	.then((name)=>createDir(name,"/routes"))
-	.then((name)=>createDir(name,"/reducer"))
+	.then((name)=>createDir(name,"/reducers"))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);
