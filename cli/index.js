@@ -4,6 +4,28 @@ const prompt = require("co-prompt");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const fs = require('fs');
+const srcDir = "../../target";
+
+let copyFile = (name, oldPath, newPath)=>{
+	newPath = name + newPath;
+	return new Promise(res => {
+        	const rd = fs.createReadStream(oldPath);
+        	rd.on('error', err => {
+			console.log(err.code+"] error occur in read old file.");
+			res(name);
+		});
+        	const wr = fs.createWriteStream(newPath);
+        	wr.on('error', err => {
+			console.log(err.code+"] error occur in write new file.");
+			res(name);
+		});
+        	wr.on('close', () => {
+			console.log(oldPath+" is copied to "+newPath+".");
+			res(name);
+		});
+        	rd.pipe(wr);
+	});
+};
 
 let moveFile = (name, oldPath, newPath)=>{
 	oldPath = name + oldPath;
@@ -14,7 +36,7 @@ let moveFile = (name, oldPath, newPath)=>{
 				if(err){
 					console.log(err.code+"] error occurs");
 				}else{
-					console.log(oldPath+" is copied to "+newPath+".");
+					console.log(oldPath+" is moved to "+newPath+".");
 					res(name);
 				}
 			});
@@ -143,13 +165,33 @@ new Promise(inputProjectName)
 	.then((name)=>deleteFile(name, "/src/App.js"))
 	.then((name)=>deleteFile(name, "/src/App.test.js"))
 	.then((name)=>deleteFile(name, "/src/index.css"))
-	.then((name)=>deleteFile(name, "/src/logo.svg"))
 	.then((name)=>deleteFile(name, "/package.json"))
 	.then((name)=>deleteFile(name, "/app.js"))
 	.then((name)=>deleteFile(name, "/public/index.html"))
 	.then((name)=>deleteFile(name, "/src/index.js"))
 	.then((name)=>printStage(name, "move some files"))
 	.then((name)=>moveFile(name, "/src/registerServiceWorker.js", "/src/js/registerServiceWorker.js"))
+	.then((name)=>moveFile(name, "/src/logo.svg", "/src/images/logo.svg"))
+	.then((name)=>printStage(name, "cpoy some files"))
+	.then((name)=>copyFile(name, srcDir+"/app.js", "/app.js"))
+	.then((name)=>copyFile(name, srcDir+"/start.sh", "/start.sh"))
+	.then((name)=>copyFile(name, srcDir+"/service.sh", "/service.sh"))
+	.then((name)=>copyFile(name, srcDir+"/readMe.md", "/readMe.md"))
+	.then((name)=>copyFile(name, srcDir+"/public/index.html", "/public/index.html"))
+	.then((name)=>copyFile(name, srcDir+"/package.json", "/package.json"))
+	.then((name)=>copyFile(name, srcDir+"/src/routes/HomeRoute.js", "/src/routes/HomeRoute.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/routes/AboutRoute.js", "/src/routes/AboutRoute.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/routes/PostRoute.js", "/src/routes/PostRoute.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/actions/index.js", "/src/actions/index.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/actions/ActionTypes.js", "/src/actions/ActionTypes.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/components/AppTitle.js", "/src/components/AppTitle.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/containers/App.js", "/src/containers/App.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/css/index.css", "/src/css/index.css"))
+	.then((name)=>copyFile(name, srcDir+"/src/css/App.css", "/src/css/App.css"))
+	.then((name)=>copyFile(name, srcDir+"/src/css/AppTitle.css", "/src/css/AppTitle.css"))
+	.then((name)=>copyFile(name, srcDir+"/src/reducers/index.js", "/src/reducers/index.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/reducers/messageReducer.js", "/src/reducers/messageReducer.js"))
+	.then((name)=>copyFile(name, srcDir+"/src/index.js", "/src/index.js"))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);
