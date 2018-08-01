@@ -5,7 +5,12 @@ const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const fs = require('fs');
 
-
+let printStage = (name, stage)=>{
+	return new Promise(res=>{
+		console.log("["+name+":: "+stage+"]");
+		res(name);
+	});
+};
 let createDir = (name, path)=>{
 	path = name + path;
 	return new Promise((res)=>{
@@ -62,16 +67,19 @@ let copyProcess = (filename) =>{
 
 
 new Promise(inputProjectName)
+	.then((name)=>printStage(name, "create-react-app"))
 	.then(craProcess)
+	.then((name)=>printStage(name, "express-generator"))
 	.then(expressProcess)
-	.then((name)=>createDir(name,"/actions"))
-	.then((name)=>createDir(name,"/components"))
-	.then((name)=>createDir(name,"/containers"))
-	.then((name)=>createDir(name,"/css"))
-	.then((name)=>createDir(name,"/images"))
-	.then((name)=>createDir(name,"/js"))
-	.then((name)=>createDir(name,"/routes"))
-	.then((name)=>createDir(name,"/reducers"))
+	.then((name)=>printStage(name, "create additional directory"))
+	.then((name)=>createDir(name,"/src/actions"))
+	.then((name)=>createDir(name,"/src/components"))
+	.then((name)=>createDir(name,"/src/containers"))
+	.then((name)=>createDir(name,"/src/css"))
+	.then((name)=>createDir(name,"/src/images"))
+	.then((name)=>createDir(name,"/src/js"))
+	.then((name)=>createDir(name,"/src/routes"))
+	.then((name)=>createDir(name,"/src/reducers"))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);
