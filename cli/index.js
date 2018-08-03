@@ -4,7 +4,7 @@ const prompt = require("co-prompt");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const fs = require('fs');
-const srcDir = "../../target";
+const srcDir = "../target";
 
 let copyFile = (name, oldPath, newPath)=>{
 	newPath = name + newPath;
@@ -176,9 +176,7 @@ new Promise(inputProjectName)
 	.then((name)=>copyFile(name, srcDir+"/app.js", "/app.js"))
 	.then((name)=>copyFile(name, srcDir+"/start.sh", "/start.sh"))
 	.then((name)=>copyFile(name, srcDir+"/service.sh", "/service.sh"))
-	.then((name)=>copyFile(name, srcDir+"/readMe.md", "/readMe.md"))
 	.then((name)=>copyFile(name, srcDir+"/public/index.html", "/public/index.html"))
-	.then((name)=>copyFile(name, srcDir+"/package.json", "/package.json"))
 	.then((name)=>copyFile(name, srcDir+"/src/routes/HomeRoute.js", "/src/routes/HomeRoute.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/routes/AboutRoute.js", "/src/routes/AboutRoute.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/routes/PostRoute.js", "/src/routes/PostRoute.js"))
@@ -192,6 +190,7 @@ new Promise(inputProjectName)
 	.then((name)=>copyFile(name, srcDir+"/src/reducers/index.js", "/src/reducers/index.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/reducers/messageReducer.js", "/src/reducers/messageReducer.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/index.js", "/src/index.js"))
+	.then((name)=>copyFile(name, __dirname+"/template/package.json.template", "/package.json"))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);
