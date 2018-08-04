@@ -6,6 +6,23 @@ const spawn = require("child_process").spawn;
 const fs = require('fs');
 const srcDir = "../target";
 
+let replaceFile = (name, path, regex, replacement)=>{
+	path = name + path;
+	return new Promise(res=>{
+		fs.readFile(path, 'utf8', function (err,data) {
+			if (err) {
+				return console.log(err);
+			}
+ 			const result = data.replace(regex, replacement);
+			fs.writeFile(path, result, 'utf8', function (err) {
+				console.log("replacement is exec");
+				if (err) return console.log(err);
+				res(name);
+			});
+		});
+	});
+};
+
 let copyFile = (name, oldPath, newPath)=>{
 	newPath = name + newPath;
 	return new Promise(res => {
@@ -104,6 +121,7 @@ let createDir = (name, path)=>{
 let inputProjectName = (res, rej)=>{
 	return co(function *(){
 		let name = yield prompt("name: ");
+		// let host = yield prompt("host: ");
 		res(name);
 	});
 };
@@ -137,9 +155,18 @@ let expressProcess = (name) => {
 	});
 };
 
-let copyProcess = (filename) =>{
-
-} 
+let installProcess = (name) =>{
+	console.log("install", name);
+	return new Promise(res=>{
+		let ex = exec("cd "+name+" && yarn add react react-dom react-scripts react-redux react-router-dom redux redux-actions cookie-parser debug ejs express http-errors morgan");
+		ex.stdout.on("data", data=>{
+			console.log(data);
+		});
+		ex.on("close",(code,signal)=>{
+			res(name);
+		});
+	});
+}; 
 
 
 new Promise(inputProjectName)
@@ -173,6 +200,7 @@ new Promise(inputProjectName)
 	.then((name)=>moveFile(name, "/src/registerServiceWorker.js", "/src/js/registerServiceWorker.js"))
 	.then((name)=>moveFile(name, "/src/logo.svg", "/src/images/logo.svg"))
 	.then((name)=>printStage(name, "cpoy some files"))
+	.then((name)=>copyFile(name, srcDir+"/.env.development", "/.env.development"))
 	.then((name)=>copyFile(name, srcDir+"/app.js", "/app.js"))
 	.then((name)=>copyFile(name, srcDir+"/start.sh", "/start.sh"))
 	.then((name)=>copyFile(name, srcDir+"/service.sh", "/service.sh"))
@@ -190,7 +218,11 @@ new Promise(inputProjectName)
 	.then((name)=>copyFile(name, srcDir+"/src/reducers/index.js", "/src/reducers/index.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/reducers/messageReducer.js", "/src/reducers/messageReducer.js"))
 	.then((name)=>copyFile(name, srcDir+"/src/index.js", "/src/index.js"))
+	.then((name)=>copyFile(name, srcDir+"/.env.development","/.env.development"))
 	.then((name)=>copyFile(name, __dirname+"/template/package.json.template", "/package.json"))
+	.then((name)=>replaceFile(name, "/package.json",/\${name}/g, name))
+	.then((name)=>replaceFile(name, "/.env.development",/\${host}/g, "ec2-13-124-117-138.ap-northeast-2.compute.amazonaws.com"))
+	.then((name)=>installProcess(name))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);
