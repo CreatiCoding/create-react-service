@@ -4,8 +4,9 @@ const prompt = require("co-prompt");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const fs = require('fs');
-const srcDir = "../target";
+const srcDir = __dirname + "/../target";
 
+console.log(srcDir);
 let replaceFile = (name, path, regex, replacement)=>{
 	path = name + path;
 	return new Promise(res=>{
