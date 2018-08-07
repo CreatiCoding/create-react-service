@@ -4,10 +4,11 @@ const prompt = require("co-prompt");
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const fs = require('fs');
-const srcDir = __dirname + "/../target";
+const srcDir = __dirname + "/target";
 
 console.log(srcDir);
-let replaceFile = (name, path, regex, replacement)=>{
+let replaceFile = (param, path, regex, replacement)=>{
+	let name = param.name;
 	path = name + path;
 	return new Promise(res=>{
 		fs.readFile(path, 'utf8', function (err,data) {
@@ -18,34 +19,36 @@ let replaceFile = (name, path, regex, replacement)=>{
 			fs.writeFile(path, result, 'utf8', function (err) {
 				console.log("replacement is exec");
 				if (err) return console.log(err);
-				res(name);
+				res(param);
 			});
 		});
 	});
 };
 
-let copyFile = (name, oldPath, newPath)=>{
+let copyFile = (param, oldPath, newPath)=>{
+	let name = param.name;
 	newPath = name + newPath;
 	return new Promise(res => {
         	const rd = fs.createReadStream(oldPath);
         	rd.on('error', err => {
 			console.log(err.code+"] error occur in read old file.");
-			res(name);
+			res(param);
 		});
         	const wr = fs.createWriteStream(newPath);
         	wr.on('error', err => {
 			console.log(err.code+"] error occur in write new file.");
-			res(name);
+			res(param);
 		});
         	wr.on('close', () => {
 			console.log(oldPath+" is copied to "+newPath+".");
-			res(name);
+			res(param);
 		});
         	rd.pipe(wr);
 	});
 };
 
-let moveFile = (name, oldPath, newPath)=>{
+let moveFile = (param, oldPath, newPath)=>{
+	let name = param.name;
 	oldPath = name + oldPath;
 	newPath = name + newPath;
 	return new Promise(res=>{
@@ -55,30 +58,32 @@ let moveFile = (name, oldPath, newPath)=>{
 					console.log(err.code+"] error occurs");
 				}else{
 					console.log(oldPath+" is moved to "+newPath+".");
-					res(name);
+					res(param);
 				}
 			});
 		}else{
 			console.log(oldPath+" not existed or "+newPath+" already existed.");
-			res(name);
+			res(param);
 		}
 	});
 };
 
-let deleteFile = (name, path)=>{
+let deleteFile = (param, path)=>{
+	let name = param.name;
 	path = name + path;
 	return new Promise(res=>{
 		if(fs.existsSync(path)){
 			console.log(path+" is deleted.");
 			fs.unlinkSync(path);
-			res(name);
+			res(param);
 		}else{
 			console.log(path+" already deleted.");
-			res(name);
+			res(param);
 		}
 	});
 };
-let deleteDir = (name, path)=>{
+let deleteDir = (param, path)=>{
+	let name = param.name;
 	path = name + path;
 	return new Promise(res=>{
 		if(fs.existsSync(path)){
@@ -92,29 +97,31 @@ let deleteDir = (name, path)=>{
 			});
 			console.log(path+" is deleted.");
 			fs.rmdirSync(path);
-			res(name);
+			res(param);
 		}else{
 			console.log(path+" already deleted.");
-			res(name);
+			res(param);
 		}
 	});
 };
-let printStage = (name, stage)=>{
+let printStage = (param, stage)=>{
+	let name = param.name;
 	return new Promise(res=>{
 		console.log("["+name+":: "+stage+"]");
-		res(name);
+		res(param);
 	});
 };
-let createDir = (name, path)=>{
+let createDir = (param, path)=>{
+	let name = param.name;
 	path = name + path;
 	return new Promise((res)=>{
 		if(!fs.existsSync(path)){
 			console.log(path+" is created.");
 			fs.mkdirSync(path);
-			res(name);
+			res(param);
 		} else {
 			console.log(path+" already exists.");
-			res(name);
+			res(param);
 		}
 	});
 };
@@ -122,12 +129,16 @@ let createDir = (name, path)=>{
 let inputProjectName = (res, rej)=>{
 	return co(function *(){
 		let name = yield prompt("name: ");
-		// let host = yield prompt("host: ");
-		res(name);
+		let host = yield prompt("host: ");
+		res({
+			name: name,
+			host: host
+		});
 	});
 };
 
-let craProcess = (name) => {
+let craProcess = (param) => {
+	let name = param.name;
 	console.log("cra",name);
 	return new Promise(res=>{
 		let ex = exec("create-react-app " + name);
@@ -135,12 +146,13 @@ let craProcess = (name) => {
 			console.log(data);
 		});
 		ex.on("close", (code, signal)=>{
-			res(name);
+			res(param);
 		});
 	});	
 };
 
-let expressProcess = (name) => {
+let expressProcess = (param) => {
+	let name = param.name;
 	console.log("express",name);
 	return new Promise(res=>{
 		let ex = exec("echo y | express --view=ejs " + name);
@@ -148,7 +160,7 @@ let expressProcess = (name) => {
 			console.log(data);
 		});
 		ex.on("close", (code, signal)=>{
-			res(name);
+			res(param);
 		});
 		ex.stdin.write("y");
 		ex.stdin.end();
@@ -156,7 +168,8 @@ let expressProcess = (name) => {
 	});
 };
 
-let installProcess = (name) =>{
+let installProcess = (param) =>{
+	let name = param.name;
 	console.log("install", name);
 	return new Promise(res=>{
 		let ex = exec("cd "+name+" && yarn add react react-dom react-scripts react-redux react-router-dom redux redux-actions cookie-parser debug ejs express http-errors morgan");
@@ -164,66 +177,66 @@ let installProcess = (name) =>{
 			console.log(data);
 		});
 		ex.on("close",(code,signal)=>{
-			res(name);
+			res(param);
 		});
 	});
 }; 
 
 
 new Promise(inputProjectName)
-	.then((name)=>printStage(name, "create-react-app"))
+	.then((param)=>printStage(param, "create-react-app"))
 	.then(craProcess)
-	.then((name)=>printStage(name, "express-generator"))
+	.then((param)=>printStage(param, "express-generator"))
 	.then(expressProcess)
-	.then((name)=>printStage(name, "create additional directory"))
-	.then((name)=>createDir(name,"/src/actions"))
-	.then((name)=>createDir(name,"/src/components"))
-	.then((name)=>createDir(name,"/src/containers"))
-	.then((name)=>createDir(name,"/src/css"))
-	.then((name)=>createDir(name,"/src/images"))
-	.then((name)=>createDir(name,"/src/js"))
-	.then((name)=>createDir(name,"/src/routes"))
+	.then((param)=>printStage(param, "create additional directory"))
+	.then((param)=>createDir(param,"/src/actions"))
+	.then((param)=>createDir(param,"/src/components"))
+	.then((param)=>createDir(param,"/src/containers"))
+	.then((param)=>createDir(param,"/src/css"))
+	.then((param)=>createDir(param,"/src/images"))
+	.then((param)=>createDir(param,"/src/js"))
+	.then((param)=>createDir(param,"/src/routes"))
 	.then((name)=>createDir(name,"/src/reducers"))
-	.then((name)=>printStage(name, "delete some directories"))
-	.then((name)=>deleteDir(name,"/public/images"))
-	.then((name)=>deleteDir(name,"/public/javascripts"))
-	.then((name)=>printStage(name, "delete some files"))
-	.then((name)=>deleteFile(name, "/README.md"))
-	.then((name)=>deleteFile(name, "/src/App.css"))
-	.then((name)=>deleteFile(name, "/src/App.js"))
-	.then((name)=>deleteFile(name, "/src/App.test.js"))
-	.then((name)=>deleteFile(name, "/src/index.css"))
-	.then((name)=>deleteFile(name, "/package.json"))
-	.then((name)=>deleteFile(name, "/app.js"))
-	.then((name)=>deleteFile(name, "/public/index.html"))
-	.then((name)=>deleteFile(name, "/src/index.js"))
-	.then((name)=>printStage(name, "move some files"))
-	.then((name)=>moveFile(name, "/src/registerServiceWorker.js", "/src/js/registerServiceWorker.js"))
-	.then((name)=>moveFile(name, "/src/logo.svg", "/src/images/logo.svg"))
-	.then((name)=>printStage(name, "cpoy some files"))
-	.then((name)=>copyFile(name, srcDir+"/.env.development", "/.env.development"))
-	.then((name)=>copyFile(name, srcDir+"/app.js", "/app.js"))
-	.then((name)=>copyFile(name, srcDir+"/start.sh", "/start.sh"))
-	.then((name)=>copyFile(name, srcDir+"/service.sh", "/service.sh"))
-	.then((name)=>copyFile(name, srcDir+"/public/index.html", "/public/index.html"))
-	.then((name)=>copyFile(name, srcDir+"/src/routes/HomeRoute.js", "/src/routes/HomeRoute.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/routes/AboutRoute.js", "/src/routes/AboutRoute.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/routes/PostRoute.js", "/src/routes/PostRoute.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/actions/index.js", "/src/actions/index.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/actions/ActionTypes.js", "/src/actions/ActionTypes.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/components/AppTitle.js", "/src/components/AppTitle.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/containers/App.js", "/src/containers/App.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/css/index.css", "/src/css/index.css"))
-	.then((name)=>copyFile(name, srcDir+"/src/css/App.css", "/src/css/App.css"))
-	.then((name)=>copyFile(name, srcDir+"/src/css/AppTitle.css", "/src/css/AppTitle.css"))
-	.then((name)=>copyFile(name, srcDir+"/src/reducers/index.js", "/src/reducers/index.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/reducers/messageReducer.js", "/src/reducers/messageReducer.js"))
-	.then((name)=>copyFile(name, srcDir+"/src/index.js", "/src/index.js"))
-	.then((name)=>copyFile(name, srcDir+"/.env.development","/.env.development"))
-	.then((name)=>copyFile(name, __dirname+"/template/package.json.template", "/package.json"))
-	.then((name)=>replaceFile(name, "/package.json",/\${name}/g, name))
-	.then((name)=>replaceFile(name, "/.env.development",/\${host}/g, "ec2-13-124-117-138.ap-northeast-2.compute.amazonaws.com"))
-	.then((name)=>installProcess(name))
+	.then((param)=>printStage(param, "delete some directories"))
+	.then((param)=>deleteDir(param,"/public/images"))
+	.then((param)=>deleteDir(param,"/public/javascripts"))
+	.then((param)=>printStage(param, "delete some files"))
+	.then((param)=>deleteFile(param, "/README.md"))
+	.then((param)=>deleteFile(param, "/src/App.css"))
+	.then((param)=>deleteFile(param, "/src/App.js"))
+	.then((param)=>deleteFile(param, "/src/App.test.js"))
+	.then((param)=>deleteFile(param, "/src/index.css"))
+	.then((param)=>deleteFile(param, "/package.json"))
+	.then((param)=>deleteFile(param, "/app.js"))
+	.then((param)=>deleteFile(param, "/public/index.html"))
+	.then((param)=>deleteFile(param, "/src/index.js"))
+	.then((param)=>printStage(param, "move some files"))
+	.then((param)=>moveFile(param, "/src/registerServiceWorker.js", "/src/js/registerServiceWorker.js"))
+	.then((param)=>moveFile(param, "/src/logo.svg", "/src/images/logo.svg"))
+	.then((param)=>printStage(param, "cpoy some files"))
+	.then((param)=>copyFile(param, srcDir+"/.env.development", "/.env.development"))
+	.then((param)=>copyFile(param, srcDir+"/app.js", "/app.js"))
+	.then((param)=>copyFile(param, srcDir+"/start.sh", "/start.sh"))
+	.then((param)=>copyFile(param, srcDir+"/service.sh", "/service.sh"))
+	.then((param)=>copyFile(param, srcDir+"/public/index.html", "/public/index.html"))
+	.then((param)=>copyFile(param, srcDir+"/src/routes/HomeRoute.js", "/src/routes/HomeRoute.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/routes/AboutRoute.js", "/src/routes/AboutRoute.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/routes/PostRoute.js", "/src/routes/PostRoute.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/actions/index.js", "/src/actions/index.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/actions/ActionTypes.js", "/src/actions/ActionTypes.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/components/AppTitle.js", "/src/components/AppTitle.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/containers/App.js", "/src/containers/App.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/css/index.css", "/src/css/index.css"))
+	.then((param)=>copyFile(param, srcDir+"/src/css/App.css", "/src/css/App.css"))
+	.then((param)=>copyFile(param, srcDir+"/src/css/AppTitle.css", "/src/css/AppTitle.css"))
+	.then((param)=>copyFile(param, srcDir+"/src/reducers/index.js", "/src/reducers/index.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/reducers/messageReducer.js", "/src/reducers/messageReducer.js"))
+	.then((param)=>copyFile(param, srcDir+"/src/index.js", "/src/index.js"))
+	.then((param)=>copyFile(param, srcDir+"/.env.development","/.env.development"))
+	.then((param)=>copyFile(param, __dirname+"/template/package.json.template", "/package.json"))
+	.then((param)=>replaceFile(param, "/package.json",/\${name}/g, param.name))
+	.then((param)=>replaceFile(param, "/.env.development",/\${host}/g, param.host))
+	.then((param)=>installProcess(param))
 	.then(result=>{
 		console.log("complete " + result);
 		process.exit(0);

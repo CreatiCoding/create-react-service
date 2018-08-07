@@ -1,19 +1,48 @@
 {
-  "name": "plus",
-  "version": "1.0.0",
-  "description": "",
+  "name": "create-react-service",
+  "version": "1.0.2",
+  "description": "create-react-app with node express RESTful API.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "CreatiCoding",
+    "email": "creaticoding@gmail.com",
+    "url": "https://github.com/CreatiCoding/create-react-service"
+  },
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CreatiCoding/create-react-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CreatiCoding/create-react-service/issues"
+  },
+  "license": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ],
   "bin": {
-    "plus": "./index.js"
+    "create-react-service": "./index.js"
   },
   "dependencies": {
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "fs": "0.0.1-security"
-  }
+  },
+  "keywords": [
+    "full-stack",
+    "full",
+    "RESTful",
+    "Node",
+    "express",
+    "create-react-app",
+    "react",
+    "react-router",
+    "redux",
+    "generator"
+  ]
 }
